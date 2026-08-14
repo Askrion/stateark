@@ -3,7 +3,7 @@
 **Never explain your project to an AI twice.**
 
 Your chat is a workspace, not an archive. StateArk turns a working session into a
-versioned, portable project state that any new chat can pick up.
+versioned, portable project state that any new chat can pick up. Open terminal and write:
 
 ```bash
 npx stateark
@@ -13,6 +13,8 @@ Then quit Claude Desktop completely (Cmd+Q) and reopen it. That is the whole ins
 
 *(Prefer to install from source? `npm install && npm run build && npm run setup` —
 see `INSTALL.md`. Undo any time with `npx stateark remove`.)*
+
+Here what we had in mind developing stateark - we address a problem millions of users have...
 
 ```
 You:  ...three hours of work...
