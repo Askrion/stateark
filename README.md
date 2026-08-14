@@ -11,8 +11,8 @@ npx stateark
 
 Then quit Claude Desktop completely (Cmd+Q) and reopen it. That is the whole install.
 
-*(Not published to npm yet? Install from the folder: `npm install && npm run build &&
-npm run setup` — see `INSTALL.md`.)*
+*(Prefer to install from source? `npm install && npm run build && npm run setup` —
+see `INSTALL.md`. Undo any time with `npx stateark remove`.)*
 
 ```
 You:  ...three hours of work...
@@ -125,7 +125,7 @@ Requires Node 20+.
 ```bash
 npm install
 npm run typecheck
-npm test          # 30 checks against a throwaway store — run this first
+npm test          # 89 checks against a throwaway store — run this first
 npm start
 ```
 
@@ -143,7 +143,7 @@ Health:      http://localhost:8787/health
 
 ## Security model
 
-The agent is an unauthenticated-by-default local HTTP server, so v0.4 assumes any web page
+The HTTP entrypoint is a local server on your own machine, so StateArk assumes any web page
 you visit is hostile:
 
 | Control | Default |
@@ -163,22 +163,24 @@ Before exposing the agent over HTTPS: set a long `STATEARK_ACCESS_KEY`, set
 
 Local-first and hosted LLMs are different networking environments. Claude Desktop/Code and
 other local MCP clients can talk to the local agent directly. A hosted ChatGPT/Gemini
-client generally cannot reach `localhost` on your computer. For those you need either
-(a) a secure HTTPS route to your running local agent, or (b) a StateArk cloud gateway that
-reads the synced copy. Do not confuse a cloud container's filesystem with the user's device.
+client generally cannot reach `localhost` on your computer. For those you would need a
+secure HTTPS route to your running local agent — remote access is on the roadmap and does
+not exist yet.
 
-Recommended order for your own testing:
+If you are setting this up, in this order:
 
 1. run StateArk locally;
-2. test Savepoint/Resume from a local MCP client;
-3. enable Supabase sync;
-4. only then expose the agent securely or build the cloud gateway.
+2. test Savepoint and Resume from a local MCP client;
+3. enable Supabase sync only if you actually want a mirror;
+4. expose the agent over HTTPS only after the three steps above work.
 
-## Local-only Free mode
+## Local-only mode — the default
 
 Leave `SUPABASE_URL`, `SUPABASE_SECRET_KEY` and `STATEARK_OWNER_ID` unset. Cloud sync stays
 off and files never leave the machine. Default store: `~/StateArk`
 (override with `STATEARK_LOCAL_ROOT`).
+
+This is what you get out of the box. The Supabase section below is opt-in.
 
 ## Local + Supabase sync
 
@@ -199,8 +201,9 @@ Cloud is a mirror, not the master:
 - retry a failed push with the `sync_savepoint` tool.
 
 Text/code artifacts up to 2 MB are mirrored inline in Postgres; everything else goes to the
-private Storage bucket. **The mirror is not end-to-end encrypted.** Add client-side
-encryption before selling a "private encrypted sync" tier.
+private Storage bucket. **The mirror is not end-to-end encrypted** — the Supabase project
+can read what it stores. Sync is off by default for exactly that reason; turn it on only
+for a project you would be comfortable putting in any hosted database.
 
 ## Savepoint behaviour
 
@@ -233,6 +236,12 @@ check never costs you work, it only tells the model to come clean.
 | `truncation_marker` | stored text contains `... rest unchanged`, `[...]`, `… gekürzt` and similar |
 | `no_change` | this savepoint is identical to the previous one |
 | `journal_not_reflected` | decisions were journalled but the submitted state lists none |
+| `artifacts_mentioned_but_missing` | the state text names a file (`schema.sql`, `app.py`, …) that was never handed over as an artifact |
+
+The last one is the check that matters most in practice. StateArk cannot read your chat,
+so a filename appearing in the prose is the only available clue that the model *described*
+a file instead of preserving it. The warning is phrased as a question, because a named file
+may legitimately be planned or live outside the conversation.
 
 ## Journal
 
@@ -268,23 +277,27 @@ path and hash rather than invented content.
 
 ## MCP clients
 
-- **Claude Desktop / Claude Code / local MCP clients** — point them at the local
-  Streamable HTTP endpoint.
-- **ChatGPT web/mobile** — a hosted client cannot reach your `localhost`. Expose the agent
-  through an authenticated HTTPS route (and set `STATEARK_ALLOWED_HOSTS`), or build the
-  cloud gateway. Do not solve this by moving the source of truth into an ephemeral cloud
-  filesystem.
-- **Gemini** — same principle.
+- **Claude Desktop** — `npx stateark` registers the stdio entrypoint for you.
+- **Claude Code** — point it at the local Streamable HTTP endpoint:
+  `claude mcp add --transport http ...`
+- **ChatGPT web/mobile, Gemini, and other hosted clients** — these dial your server from
+  the vendor's cloud and cannot reach `localhost` on your machine. That is a networking
+  fact, not a missing feature. Reaching your savepoints from a hosted client needs an
+  authenticated HTTPS route to your own machine; it is on the roadmap and does not exist
+  yet.
 
-## Commercial split enabled by this architecture
+## Roadmap
 
-**Free / Local:** unlimited Savepoint, Resume, History, artifacts, open format, no account.
+Nothing here exists yet. In roughly this order:
 
-**Pro / Sync (future):** cloud backup, multi-device continuity, remote Resume, and the
-web/mobile gateway that makes cross-platform continuity actually work.
+- **Optional cloud storage** — your savepoints mirrored so a dead laptop is not a dead
+  project. Off by default, and only ever a copy: your disk stays the original.
+- **Remote access** — reaching your state from web and mobile clients, not just the
+  desktop app on the one machine that holds it.
+- **Branching** — two chats working the same project currently produce one linear chain
+  of versions. Documented, not solved.
+- **State pruning** — over many savepoints `state.md` grows without limit. It needs a
+  size ceiling and a rule for what ages out.
 
-Note that "sync a folder" alone is weak as a paid tier — the format is open files, so a user
-can point Dropbox or git at `~/StateArk` and get it for free. The defensible paid surface is
-the **remote gateway** (reaching your state from a hosted LLM), not storage.
-
-StateArk's promise: **Local by default. Continue anywhere when you choose to sync.**
+StateArk is free to use, including commercially. See the licence above for the one thing
+it does not allow.
