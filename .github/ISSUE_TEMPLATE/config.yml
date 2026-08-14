@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Download StateArk
+    url: https://stateark.dev
+    about: The build and the step-by-step install guide live here.
+  - name: Rather not use GitHub?
+    url: https://stateark.dev
+    about: Reply to the email you got with the download — it reaches the same person.

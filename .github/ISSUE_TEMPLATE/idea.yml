@@ -1,0 +1,29 @@
+name: Idea or question
+description: Something you wish it did, or something that confused you.
+title: "[idea] "
+labels: ["idea"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Confusion counts as feedback. If something was unclear, that is a problem with
+        StateArk, not with you.
+
+  - type: textarea
+    id: idea
+    attributes:
+      label: What is on your mind?
+      placeholder: |
+        I wanted to keep two versions of the same project side by side and could not
+        work out how.
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: What were you trying to get done?
+      description: The underlying goal, not the feature. It often leads somewhere better.
+      placeholder: I run the same analysis for two clients and did not want to mix them up.
+    validations:
+      required: false

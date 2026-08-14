@@ -1,0 +1,89 @@
+name: Something broke
+description: Tell me what happened. Rough notes are fine.
+title: "[bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        You do not need to write a clean report. What you typed and what happened is
+        already enough for me to work with. Skip any field you cannot answer.
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: In your own words. One or two sentences is fine.
+      placeholder: I typed Savepoint and got an error saying the project was not found.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect instead?
+      placeholder: I expected it to save, since I had made a savepoint in that project before.
+    validations:
+      required: false
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: What did you do just before?
+      description: Roughly what you typed, in order. Copy and paste is perfect.
+      placeholder: |
+        1. Worked in a chat for about an hour
+        2. Typed "Savepoint"
+        3. Got the error below
+    validations:
+      required: false
+
+  - type: textarea
+    id: message
+    attributes:
+      label: Any error message?
+      description: Paste it here. Formatting does not matter.
+      render: text
+    validations:
+      required: false
+
+  - type: dropdown
+    id: client
+    attributes:
+      label: Where were you using StateArk?
+      options:
+        - Claude Desktop
+        - Claude Code
+        - Somewhere else
+        - Not sure
+    validations:
+      required: false
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: Which system?
+      options:
+        - macOS
+        - Windows
+        - Linux
+        - Not sure
+    validations:
+      required: false
+
+  - type: input
+    id: version
+    attributes:
+      label: Which StateArk version?
+      description: "Ask in a chat: which StateArk tools do you have? Or run: npx stateark version. Leave blank if unsure."
+      placeholder: v0.5.1
+    validations:
+      required: false
+
+  - type: markdown
+    attributes:
+      value: |
+        ---
+        **Before you post:** issues here are public. If you paste an error message or
+        part of a savepoint, have a quick look for client names, addresses or anything
+        else you would rather not publish, and replace it with `xxx`.
