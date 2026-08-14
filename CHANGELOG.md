@@ -1,5 +1,18 @@
 # Changelog
 
+## v0.5.2 — Registry metadata
+
+- `mcpName` added to `package.json`, required by the official MCP Registry to verify
+  that the npm package and the registry entry belong to the same owner.
+- `server.json` added for `registry.modelcontextprotocol.io`.
+- `glama.json` added so the Glama listing can be claimed.
+- Smoke suite: the CLI config path is now resolved per platform instead of being
+  hard-coded to the Linux location. On macOS the two "does not touch the config"
+  checks were passing vacuously — they asserted the absence of a file nothing ever
+  wrote there — and the corrupt-config check could not fail because the corrupt file
+  was planted where the CLI never looks.
+- README: corrected the check count, removed the stale npm and version references.
+
 ## v0.5.1 — One-line install
 
 - **`npx stateark`** registers with Claude Desktop in a single command: no download, no

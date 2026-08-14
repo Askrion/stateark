@@ -1,17 +1,17 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
-  "name": "io.github.askrion/stateark",
+  "name": "io.github.Askrion/stateark",
   "description": "Local-first version control for AI work. Savepoint and resume your project state across chats.",
   "repository": {
     "url": "https://github.com/Askrion/stateark",
     "source": "github"
   },
-  "version": "0.5.1",
+  "version": "0.5.2",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "stateark",
-      "version": "0.5.1",
+      "version": "0.5.2",
       "transport": {
         "type": "stdio"
       }
